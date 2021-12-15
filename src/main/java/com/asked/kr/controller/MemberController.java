@@ -25,8 +25,9 @@ public class MemberController {
     public ListResult<Member> findAll(){
         return responseService.getListResult(memberService.findAll());
     }
-    @GetMapping("/member/{memberIdx}")
-    public SingleResult<Member> findOne(@PathVariable Long memberIdx){
-        return responseService.getSingleResult(memberService.findOne(memberIdx));
+    @GetMapping("/member/{memberEmail}")
+    public SingleResult<Member> findOne(@PathVariable String memberEmail){
+        return responseService.getSingleResult(memberService.findOne(memberEmail));
     }
+
 }
