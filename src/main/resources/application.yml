@@ -1,17 +1,15 @@
 server:
   port: 8000
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/asked?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: qazwsxedc9070@
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         format_sql: true
+  profiles:
+    include:
+      - secret
 logging:
   level:
     org.hibernate.SQL: debug

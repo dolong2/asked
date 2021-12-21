@@ -2,6 +2,7 @@ package com.asked.kr.controller;
 
 import com.asked.kr.domain.Member;
 import com.asked.kr.dto.MemberDto;
+import com.asked.kr.dto.SignInDto;
 import com.asked.kr.response.ResponseService;
 import com.asked.kr.response.result.CommonResult;
 import com.asked.kr.response.result.ListResult;
@@ -9,6 +10,8 @@ import com.asked.kr.response.result.SingleResult;
 import com.asked.kr.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +23,10 @@ public class MemberController {
     public CommonResult join(@RequestBody MemberDto memberDto){
         memberService.join(memberDto);
         return responseService.getSuccessResult();
+    }
+    @PostMapping("/login")
+    public SingleResult<Map<String,String>> login(@RequestBody SignInDto signInDto){
+        return responseService.getSingleResult(memberService.login(signInDto));
     }
     @GetMapping("/member")
     public ListResult<Member> findAll(){
