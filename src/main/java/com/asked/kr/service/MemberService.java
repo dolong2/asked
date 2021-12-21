@@ -8,6 +8,7 @@ import com.asked.kr.exception.ErrorCode;
 import com.asked.kr.exception.exceptions.EmailDuplicateException;
 import com.asked.kr.exception.exceptions.NoMemberException;
 import com.asked.kr.repository.MemberRepository;
+import com.asked.kr.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final RedisUtil redisUtil;
     public Long join(MemberDto memberDto){
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         Member member = memberDto.toEntity();
@@ -54,7 +56,10 @@ public class MemberService {
         map.put("refreshToken",refreshToken);
         return map;
     }
-    public void logout(){}
+    public void logout(){
+        String userEmail = this.getUserEmail();
+        redisUtil.deleteData(userEmail);
+    }
     public void Update(MemberDto memberDto){
         List<Member> byEmail = memberRepository.findByEmail(getUserEmail());
         if(byEmail.isEmpty()){

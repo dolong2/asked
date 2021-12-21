@@ -24,6 +24,11 @@ public class MemberController {
         memberService.join(memberDto);
         return responseService.getSuccessResult();
     }
+    @PostMapping("/logout")
+    public CommonResult logout(){
+        memberService.logout();
+        return responseService.getSuccessResult();
+    }
     @PostMapping("/login")
     public SingleResult<Map<String,String>> login(@RequestBody SignInDto signInDto){
         return responseService.getSingleResult(memberService.login(signInDto));
