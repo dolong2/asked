@@ -36,5 +36,10 @@ public class MemberController {
     public SingleResult<Member> findOne(@PathVariable String memberEmail){
         return responseService.getSingleResult(memberService.findOne(memberEmail));
     }
+    @PutMapping("/member")
+    public CommonResult update(@RequestBody MemberDto memberDto){
+        memberService.Update(memberDto);
+        return responseService.getSuccessResult();
+    }
 
 }

@@ -9,6 +9,8 @@ import com.asked.kr.exception.exceptions.EmailDuplicateException;
 import com.asked.kr.exception.exceptions.NoMemberException;
 import com.asked.kr.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,13 +55,14 @@ public class MemberService {
         return map;
     }
     public void logout(){}
-    public void Update(Long memberIdx,MemberDto memberDto){
-        Member byId = memberRepository.getById(memberIdx);
-        if(byId==null){
+    public void Update(MemberDto memberDto){
+        List<Member> byEmail = memberRepository.findByEmail(getUserEmail());
+        if(byEmail.isEmpty()){
             throw new NoMemberException("해당 유저를 찾을 수 없습니다",ErrorCode.NO_MEMBER);
         }
+        Member byMail = byEmail.get(0);
         Member member = memberDto.toEntity();
-        byId=member;
+        byMail=member;
     }
     public Member findOne(String memberEmail) throws IllegalStateException{
         List<Member> byEmail = memberRepository.findByEmail(memberEmail);
@@ -71,5 +74,16 @@ public class MemberService {
     }
     public List<Member> findAll(){
         return memberRepository.findAll();
+    }
+
+    static public String getUserEmail() {
+        String userEmail;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal instanceof UserDetails) {
+            userEmail = ((UserDetails) principal).getUsername();
+        } else {
+            userEmail = principal.toString();
+        }
+        return userEmail;
     }
 }
