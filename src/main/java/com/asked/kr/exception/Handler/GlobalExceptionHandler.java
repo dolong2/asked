@@ -1,5 +1,6 @@
 package com.asked.kr.exception.Handler;
 
+import com.asked.kr.exception.exceptions.AlreadyExistsCommentException;
 import com.asked.kr.exception.exceptions.EmailDuplicateException;
 import com.asked.kr.exception.exceptions.NoMemberException;
 import com.asked.kr.exception.exceptions.NotSameMemberException;
@@ -28,6 +29,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotSameMemberException.class)
     public ResponseEntity<ErrorResponse> handleNotSameMemberException(NotSameMemberException ex){
         log.error("NotSameMemberException",ex);
+        ErrorResponse response=new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+    @ExceptionHandler(AlreadyExistsCommentException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyExistsCommentException(AlreadyExistsCommentException ex){
+        log.error("AlreadyExistsCommentException",ex);
         ErrorResponse response=new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }

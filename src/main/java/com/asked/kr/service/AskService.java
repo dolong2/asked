@@ -5,6 +5,7 @@ import com.asked.kr.domain.Member;
 import com.asked.kr.dto.AskDto;
 import com.asked.kr.dto.CommentDto;
 import com.asked.kr.exception.ErrorCode;
+import com.asked.kr.exception.exceptions.AlreadyExistsCommentException;
 import com.asked.kr.exception.exceptions.NoMemberException;
 import com.asked.kr.exception.exceptions.NotSameMemberException;
 import com.asked.kr.repository.AskRepository;
@@ -42,7 +43,10 @@ public class AskService {
         }
         Member member = byEmail.get(0);
         if(member!=byIdMember){
-            throw new NotSameMemberException("유저가 일치하지 않습니다",ErrorCode.NOT_SAME_MEMBER);
+            throw new NotSameMemberException("유저가 일치하지 않습니다", ErrorCode.NOT_SAME_MEMBER);
+        }
+        if(byId.getComment()!=null){
+            throw new AlreadyExistsCommentException("답변이 존재하는 질문입니다", ErrorCode.ALREADY_EXISTS_COMMENT);
         }
         byId.setComment(commentDto.getComment());
     }
