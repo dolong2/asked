@@ -2,6 +2,7 @@ package com.asked.kr.exception.Handler;
 
 import com.asked.kr.exception.exceptions.EmailDuplicateException;
 import com.asked.kr.exception.exceptions.NoMemberException;
+import com.asked.kr.exception.exceptions.NotSameMemberException;
 import com.asked.kr.exception.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoMemberException.class)
     public ResponseEntity<ErrorResponse> handleNoMemberException(NoMemberException ex){
         log.error("NoMemberException",ex);
+        ErrorResponse response=new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+    @ExceptionHandler(NotSameMemberException.class)
+    public ResponseEntity<ErrorResponse> handleNotSameMemberException(NotSameMemberException ex){
+        log.error("NotSameMemberException",ex);
         ErrorResponse response=new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
