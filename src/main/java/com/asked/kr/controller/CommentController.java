@@ -15,12 +15,12 @@ public class CommentController {
     private final ResponseService responseService;
     @PostMapping("/comment/{askIdx}")
     public CommonResult writeComment(@PathVariable Long askIdx, @RequestBody CommentDto commentDto){
-        askService.setComment(askIdx,commentDto);
+        askService.addComment(askIdx,commentDto);
         return responseService.getSuccessResult();
     }
     @PutMapping("/comment/{askIdx}")
     public CommonResult fixComment(@PathVariable Long askIdx, @RequestBody CommentDto commentDto){
-        askService.setComment(askIdx,commentDto);
+        askService.fixComment(askIdx,commentDto);
         return responseService.getSuccessResult();
     }
 }

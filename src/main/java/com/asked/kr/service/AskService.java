@@ -34,7 +34,7 @@ public class AskService {
     public List<Ask> getAll(String memberEmail){
         return askRepository.findByMemberEmail(memberEmail);
     }
-    public void setComment(Long askIdx, CommentDto commentDto){
+    public void addComment(Long askIdx, CommentDto commentDto){
         Ask byId = askRepository.getById(askIdx);
         Member byIdMember = byId.getMember();
         List<Member> byEmail = memberRepository.findByEmail(MemberService.getUserEmail());
@@ -47,6 +47,19 @@ public class AskService {
         }
         if(byId.getComment()!=null){
             throw new AlreadyExistsCommentException("답변이 존재하는 질문입니다", ErrorCode.ALREADY_EXISTS_COMMENT);
+        }
+        byId.setComment(commentDto.getComment());
+    }
+    public void fixComment(Long askIdx, CommentDto commentDto){
+        Ask byId = askRepository.getById(askIdx);
+        Member byIdMember = byId.getMember();
+        List<Member> byEmail = memberRepository.findByEmail(MemberService.getUserEmail());
+        if(byEmail.isEmpty()){
+            throw new NoMemberException("로그인 먼저 해주세요",ErrorCode.NO_MEMBER);
+        }
+        Member member = byEmail.get(0);
+        if(member!=byIdMember){
+            throw new NotSameMemberException("유저가 일치하지 않습니다", ErrorCode.NOT_SAME_MEMBER);
         }
         byId.setComment(commentDto.getComment());
     }
