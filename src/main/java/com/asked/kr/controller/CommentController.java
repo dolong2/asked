@@ -18,7 +18,7 @@ public class CommentController {
         askService.addComment(askIdx,commentDto);
         return responseService.getSuccessResult();
     }
-    @PutMapping("/comment/{askIdx}")
+    @PatchMapping("/comment/{askIdx}")
     public CommonResult fixComment(@PathVariable Long askIdx, @RequestBody CommentDto commentDto){
         askService.fixComment(askIdx,commentDto);
         return responseService.getSuccessResult();
