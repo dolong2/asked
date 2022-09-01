@@ -1,5 +1,6 @@
 package com.asked.kr.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,42 +18,50 @@ import java.util.Collection;
 @AllArgsConstructor
 @Builder
 public class Member implements UserDetails {
+
     @Id
     @GeneratedValue
     @Column(name = "member_id")
     private Long id;
     private String email;
+    @JsonIgnore
     private String password;
     private String name;
 
     public Member() {}
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return false;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return false;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return false;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return false;
     }

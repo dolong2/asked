@@ -1,4 +1,4 @@
-package com.asked.kr.dto;
+package com.asked.kr.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

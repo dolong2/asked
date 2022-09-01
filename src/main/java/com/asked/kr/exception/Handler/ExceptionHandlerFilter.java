@@ -8,7 +8,7 @@ import com.asked.kr.exception.response.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.entity.ContentType;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,13 +24,6 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
 
-    /**
-     * filter에서 발생한 Exception을 catch한 후 사용자에게 예외 Response를 전달합니다.
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @param filterChain filterChain
-     * @author 정시원
-     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         try {
@@ -49,7 +42,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     private void responseErrorMessage(HttpServletResponse response, ErrorCode errorCode) {
         // content type, status code 세팅
-        response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+        response.setContentType("");
         response.setStatus(errorCode.getStatus());
 
         try {

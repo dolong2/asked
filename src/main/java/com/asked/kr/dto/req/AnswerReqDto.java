@@ -1,5 +1,6 @@
-package com.asked.kr.dto;
+package com.asked.kr.dto.req;
 
+import com.asked.kr.domain.Answer;
 import com.asked.kr.domain.Ask;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +10,14 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @AllArgsConstructor @NoArgsConstructor
-public class AskDto {
-    @NotBlank(message = "content should be valid")
+public class AnswerReqDto {
+    @NotBlank(message = "comment should be valid")
     private String content;
-    public Ask toEntity(){
-        return Ask.builder()
-                .content(this.content)
+
+    public Answer toEntity(Ask ask){
+        return Answer.builder()
+                .ask(ask)
+                .content(content)
                 .build();
     }
 }

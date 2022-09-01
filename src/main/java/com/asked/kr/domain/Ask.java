@@ -3,11 +3,13 @@ package com.asked.kr.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Ask {
@@ -16,18 +18,10 @@ public class Ask {
     @Column(name = "Ask_id")
     private Long id;
     private String content;
-    private String comment;//굳이 질문과 답변이 1:1테이블로 안 만들고 간단하게 이래도 될듯?
+
+    @OneToOne(mappedBy = "ask")
+    private Answer answer;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
-    private Member member;
-
-
-    public Ask() {}
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
-    public void setComment(String comment){
-        this.comment = comment;
-    }
+    private Member receiver;
 }

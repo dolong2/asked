@@ -46,9 +46,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	//modelMapper
-	implementation 'org.modelmapper:modelmapper:2.3.0'
-
-	implementation 'io.fabric8:docker-maven-plugin:0.30.0'
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 }
 
 test {

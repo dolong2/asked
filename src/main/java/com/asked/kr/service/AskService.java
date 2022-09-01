@@ -2,65 +2,36 @@ package com.asked.kr.service;
 
 import com.asked.kr.domain.Ask;
 import com.asked.kr.domain.Member;
-import com.asked.kr.dto.AskDto;
-import com.asked.kr.dto.CommentDto;
+import com.asked.kr.dto.req.AskReqDto;
+import com.asked.kr.dto.res.AskResDto;
 import com.asked.kr.exception.ErrorCode;
-import com.asked.kr.exception.exceptions.AlreadyExistsCommentException;
 import com.asked.kr.exception.exceptions.NoMemberException;
-import com.asked.kr.exception.exceptions.NotSameMemberException;
 import com.asked.kr.repository.AskRepository;
 import com.asked.kr.repository.MemberRepository;
+import com.asked.kr.util.ResponseDtoUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AskService {
     private final AskRepository askRepository;
     private final MemberRepository memberRepository;
-    public Long write(AskDto askDto,String memberEmail){
-        List<Member> byEmail = memberRepository.findByEmail(memberEmail);
-        if(byEmail.isEmpty()){
-            throw new NoMemberException("해당 유저가 존재하지 않습니다", ErrorCode.NO_MEMBER);
-        }
-        Member member = byEmail.get(0);
-        Ask ask = askDto.toEntity();
-        ask.setMember(member);
+    public Long write(AskReqDto askReqDto, String memberEmail){
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new NoMemberException("해당 유저가 존재하지 않습니다.", ErrorCode.NO_MEMBER));
+        Ask ask = askReqDto.toEntity(member);
         askRepository.save(ask);
         return ask.getId();
     }
-    public List<Ask> getAll(String memberEmail){
-        return askRepository.findByMemberEmail(memberEmail);
-    }
-    public void addComment(Long askIdx, CommentDto commentDto){
-        Ask byId = askRepository.getById(askIdx);
-        Member byIdMember = byId.getMember();
-        List<Member> byEmail = memberRepository.findByEmail(MemberService.getUserEmail());
-        if(byEmail.isEmpty()){
-            throw new NoMemberException("로그인 먼저 해주세요",ErrorCode.NO_MEMBER);
-        }
-        Member member = byEmail.get(0);
-        if(member!=byIdMember){
-            throw new NotSameMemberException("유저가 일치하지 않습니다", ErrorCode.NOT_SAME_MEMBER);
-        }
-        if(byId.getComment()!=null){
-            throw new AlreadyExistsCommentException("답변이 존재하는 질문입니다", ErrorCode.ALREADY_EXISTS_COMMENT);
-        }
-        byId.setComment(commentDto.getComment());
-    }
-    public void fixComment(Long askIdx, CommentDto commentDto){
-        Ask byId = askRepository.getById(askIdx);
-        Member byIdMember = byId.getMember();
-        List<Member> byEmail = memberRepository.findByEmail(MemberService.getUserEmail());
-        if(byEmail.isEmpty()){
-            throw new NoMemberException("로그인 먼저 해주세요",ErrorCode.NO_MEMBER);
-        }
-        Member member = byEmail.get(0);
-        if(member!=byIdMember){
-            throw new NotSameMemberException("유저가 일치하지 않습니다", ErrorCode.NOT_SAME_MEMBER);
-        }
-        byId.setComment(commentDto.getComment());
+
+    public List<AskResDto> getAll(String memberEmail){
+        List<AskResDto> result = ResponseDtoUtil.mapAll(askRepository.findAskByReceiverEmail(memberEmail), AskResDto.class);
+        log.info("result  = {}",result.toString());
+        return result;
     }
 }

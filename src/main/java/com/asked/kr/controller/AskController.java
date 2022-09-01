@@ -1,7 +1,7 @@
 package com.asked.kr.controller;
 
-import com.asked.kr.domain.Ask;
-import com.asked.kr.dto.AskDto;
+import com.asked.kr.dto.req.AskReqDto;
+import com.asked.kr.dto.res.AskResDto;
 import com.asked.kr.response.ResponseService;
 import com.asked.kr.response.result.CommonResult;
 import com.asked.kr.response.result.ListResult;
@@ -16,12 +16,12 @@ public class AskController {
     private final AskService askService;
     private final ResponseService responseService;
     @PostMapping("/ask/{memberEmail}")
-    public CommonResult write(@RequestBody AskDto askDto, @PathVariable String memberEmail){
-        askService.write(askDto,memberEmail);
+    public CommonResult write(@RequestBody AskReqDto askReqDto, @PathVariable String memberEmail){
+        askService.write(askReqDto,memberEmail);
         return responseService.getSuccessResult();
     }
     @GetMapping("/ask/{memberEmail}")
-    public ListResult<Ask> getByMember(@PathVariable String memberEmail){
+    public ListResult<AskResDto> getByMember(@PathVariable String memberEmail){
         return responseService.getListResult(askService.getAll(memberEmail));
     }
 }

@@ -1,14 +1,19 @@
 package com.asked.kr.service;
 
 import com.asked.kr.config.security.jwt.TokenProvider;
+import com.asked.kr.domain.Ask;
 import com.asked.kr.domain.Member;
-import com.asked.kr.dto.MemberDto;
-import com.asked.kr.dto.SignInDto;
+import com.asked.kr.dto.req.MemberReqDto;
+import com.asked.kr.dto.req.SignInDto;
+import com.asked.kr.dto.res.AskResDto;
+import com.asked.kr.dto.res.MemberResDto;
 import com.asked.kr.exception.ErrorCode;
 import com.asked.kr.exception.exceptions.EmailDuplicateException;
 import com.asked.kr.exception.exceptions.NoMemberException;
+import com.asked.kr.repository.AskRepository;
 import com.asked.kr.repository.MemberRepository;
 import com.asked.kr.util.RedisUtil;
+import com.asked.kr.util.ResponseDtoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,13 +29,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional
 public class MemberService {
+    private final AskRepository askRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RedisUtil redisUtil;
-    public Long join(MemberDto memberDto){
-        memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
-        Member member = memberDto.toEntity();
+    public Long join(MemberReqDto memberReqDto){
+        Member member = memberReqDto.toEntity(passwordEncoder.encode(memberReqDto.getPassword()));
         if(!memberRepository.findByEmail(member.getEmail()).isEmpty()){
            throw new EmailDuplicateException("중복되는 회원이 있습니다", ErrorCode.EMAIL_DUPLICATION);
         }
@@ -38,17 +43,15 @@ public class MemberService {
         return member.getId();
     }
     public Map<String, String> login(SignInDto signInDto){
-        List<Member> byEmail = memberRepository.findByEmail(signInDto.getEmail());
-        if(byEmail.isEmpty()){
-            throw new NoMemberException("이메일을 다시 입력해주세요",ErrorCode.NO_MEMBER);
-        }
-        Member member = byEmail.get(0);
-        Boolean check = passwordEncoder.matches(signInDto.getPassword(), member.getPassword());
-        if(!check){
+        Member member = memberRepository.findByEmail(signInDto.getEmail())
+                .orElseThrow(() -> new NoMemberException("이메일을 다시 입력해주세요",ErrorCode.NO_MEMBER));
+        if(!passwordEncoder.matches(signInDto.getPassword(), member.getPassword())){
             throw new NoMemberException("패스워드를 다시 입력해주세요",ErrorCode.NO_MEMBER);
         }
         final String accessToken = tokenProvider.generateAccessToken(member.getEmail());
         final String refreshToken = tokenProvider.generateRefreshToken(member.getEmail());
+
+        redisUtil.setData("refreshToken", refreshToken);
 
         Map<String,String> map=new HashMap<>();
         map.put("email", member.getEmail());
@@ -60,25 +63,27 @@ public class MemberService {
         String userEmail = this.getUserEmail();
         redisUtil.deleteData(userEmail);
     }
-    public void Update(MemberDto memberDto){
-        List<Member> byEmail = memberRepository.findByEmail(getUserEmail());
-        if(byEmail.isEmpty()){
-            throw new NoMemberException("해당 유저를 찾을 수 없습니다",ErrorCode.NO_MEMBER);
-        }
-        Member byMail = byEmail.get(0);
-        Member member = memberDto.toEntity();
-        byMail=member;
+    public void Update(MemberReqDto memberReqDto){
+        Member member = memberRepository.findByEmail(getUserEmail())
+                .orElseThrow(()->new NoMemberException("해당 유저를 찾을 수 없습니다",ErrorCode.NO_MEMBER));
+        Member entity = memberReqDto.toEntity(passwordEncoder.encode(memberReqDto.getPassword()));
+        member = entity;
     }
-    public Member findOne(String memberEmail) throws IllegalStateException{
-        List<Member> byEmail = memberRepository.findByEmail(memberEmail);
-        if(byEmail.isEmpty()){
-            throw new NoMemberException("해당 유저를 찾을 수 없습니다",ErrorCode.NO_MEMBER);
-        }
-        Member member = byEmail.get(0);
-        return member;
+    public MemberResDto findOne(String memberEmail) throws IllegalStateException{
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(()->new NoMemberException("해당 유저를 찾을 수 없습니다",ErrorCode.NO_MEMBER));
+        MemberResDto memberResDto = ResponseDtoUtil.mapping(member, MemberResDto.class);
+        List<AskResDto> askList = ResponseDtoUtil.mapAll(askRepository.findAskByReceiverEmail(member.getEmail()), AskResDto.class);
+        memberResDto.setAsk(askList);
+        return memberResDto;
     }
-    public List<Member> findAll(){
-        return memberRepository.findAll();
+    public List<MemberResDto> findAll(){
+        List<MemberResDto> result = ResponseDtoUtil.mapAll(memberRepository.findAll(), MemberResDto.class);
+        result.forEach(memberResDto -> {
+            List<AskResDto> askList = ResponseDtoUtil.mapAll(askRepository.findAskByReceiverEmail(memberResDto.getEmail()), AskResDto.class);
+            memberResDto.setAsk(askList);
+        });
+        return result;
     }
 
     static public String getUserEmail() {
@@ -90,5 +95,12 @@ public class MemberService {
             userEmail = principal.toString();
         }
         return userEmail;
+    }
+
+    public Member getCurrentMember(){
+        String email = getUserEmail();
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NoMemberException("해당 유저를 찾을 수 없습니다", ErrorCode.NO_MEMBER));
+        return member;
     }
 }
