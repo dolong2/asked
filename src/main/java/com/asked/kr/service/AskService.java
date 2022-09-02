@@ -43,6 +43,11 @@ public class AskService {
     public void refuseAsk(Long askIdx){
         Ask ask = askRepository.findById(askIdx)
                 .orElseThrow(() -> new RuntimeException());
+        Member member = memberRepository.findByEmail(MemberService.getUserEmail())
+                .orElseThrow(() -> new NoMemberException("멤버가 존재하지 않습니다.", ErrorCode.NO_MEMBER));
+        if(ask.getReceiver()!=member){
+            throw new RuntimeException();
+        }
         ask.updateCheck(AnswerCheck.REFUSED);
     }
 }

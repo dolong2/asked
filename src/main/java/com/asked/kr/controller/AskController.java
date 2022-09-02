@@ -26,7 +26,7 @@ public class AskController {
     }
 
     @PostMapping("/ask/refuse/{askIdx}")
-    public CommonResult refuesAsk(@PathVariable Long askIdx){
+    public CommonResult refuseAsk(@PathVariable Long askIdx){
         askService.refuseAsk(askIdx);
         return responseService.getSuccessResult();
     }
