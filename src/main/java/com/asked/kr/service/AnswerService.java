@@ -1,6 +1,7 @@
 package com.asked.kr.service;
 
 import com.asked.kr.domain.Answer;
+import com.asked.kr.domain.AnswerCheck;
 import com.asked.kr.domain.Ask;
 import com.asked.kr.dto.req.AnswerReqDto;
 import com.asked.kr.dto.req.AnswerUpdateDto;
@@ -22,6 +23,7 @@ public class AnswerService {
     public Long writeAnswer(Long askIdx, AnswerReqDto answerReqDto){
         Ask ask = askRepository.findById(askIdx)
                 .orElseThrow(() -> new RuntimeException());
+        ask.updateCheck(AnswerCheck.COMPLETE);
         if(memberService.getCurrentMember() != ask.getReceiver()){
             throw new RuntimeException();
         }

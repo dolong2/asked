@@ -1,5 +1,6 @@
 package com.asked.kr.dto.req;
 
+import com.asked.kr.domain.AnswerCheck;
 import com.asked.kr.domain.Ask;
 import com.asked.kr.domain.Member;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ public class AskReqDto {
         return Ask.builder()
                 .receiver(member)
                 .content(this.content)
+                .check(AnswerCheck.WAITING)
                 .build();
     }
 }
