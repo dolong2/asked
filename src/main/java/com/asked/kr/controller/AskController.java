@@ -24,4 +24,10 @@ public class AskController {
     public ListResult<AskResDto> getByMember(@PathVariable String memberEmail){
         return responseService.getListResult(askService.getAll(memberEmail));
     }
+
+    @PostMapping("/ask/refuse/{askIdx}")
+    public CommonResult refuesAsk(@PathVariable Long askIdx){
+        askService.refuseAsk(askIdx);
+        return responseService.getSuccessResult();
+    }
 }

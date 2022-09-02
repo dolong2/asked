@@ -1,5 +1,6 @@
 package com.asked.kr.service;
 
+import com.asked.kr.domain.AnswerCheck;
 import com.asked.kr.domain.Ask;
 import com.asked.kr.domain.Member;
 import com.asked.kr.dto.req.AskReqDto;
@@ -12,6 +13,8 @@ import com.asked.kr.util.ResponseDtoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -29,9 +32,17 @@ public class AskService {
         return ask.getId();
     }
 
+    @Transactional(readOnly = true)
     public List<AskResDto> getAll(String memberEmail){
         List<AskResDto> result = ResponseDtoUtil.mapAll(askRepository.findAskByReceiverEmail(memberEmail), AskResDto.class);
         log.info("result  = {}",result.toString());
         return result;
+    }
+
+    @Transactional
+    public void refuseAsk(Long askIdx){
+        Ask ask = askRepository.findById(askIdx)
+                .orElseThrow(() -> new RuntimeException());
+        ask.updateCheck(AnswerCheck.REFUSED);
     }
 }
