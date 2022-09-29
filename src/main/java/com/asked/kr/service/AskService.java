@@ -8,13 +8,11 @@ import com.asked.kr.dto.res.AskResDto;
 import com.asked.kr.exception.ErrorCode;
 import com.asked.kr.exception.exceptions.AskNotFindException;
 import com.asked.kr.exception.exceptions.NoMemberException;
-import com.asked.kr.exception.exceptions.NotSameMemberException;
 import com.asked.kr.exception.exceptions.NotSameReceiverException;
 import com.asked.kr.repository.AskRepository;
 import com.asked.kr.repository.MemberRepository;
 import com.asked.kr.util.ResponseDtoUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class AskService {
     private final AskRepository askRepository;
