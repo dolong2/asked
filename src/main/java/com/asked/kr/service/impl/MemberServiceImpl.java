@@ -27,7 +27,6 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberServiceImpl implements MemberService {
     private final AskRepository askRepository;
     private final MemberRepository memberRepository;
@@ -46,6 +45,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public Map<String, String> login(SignInDto signInDto){
         Member member = memberRepository.findByEmail(signInDto.getEmail())
                 .orElseThrow(() -> new NoMemberException("이메일을 다시 입력해주세요",ErrorCode.NO_MEMBER));
@@ -65,12 +65,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public void logout(){
         String userEmail = this.getUserEmail();
         redisUtil.deleteData(userEmail);
     }
 
     @Override
+    @Transactional
     public void Update(MemberReqDto memberReqDto){
         Member member = memberRepository.findByEmail(getUserEmail())
                 .orElseThrow(()->new NoMemberException("해당 유저를 찾을 수 없습니다",ErrorCode.NO_MEMBER));
@@ -79,6 +81,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberResDto findOne(String memberEmail) throws IllegalStateException{
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(()->new NoMemberException("해당 유저를 찾을 수 없습니다",ErrorCode.NO_MEMBER));
@@ -89,6 +92,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MemberResDto> findAll(){
         List<MemberResDto> result = ResponseDtoUtil.mapAll(memberRepository.findAll(), MemberResDto.class);
         result.forEach(memberResDto -> {
