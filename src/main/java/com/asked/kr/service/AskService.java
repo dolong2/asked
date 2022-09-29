@@ -7,6 +7,8 @@ import com.asked.kr.dto.req.AskReqDto;
 import com.asked.kr.dto.res.AskResDto;
 import com.asked.kr.exception.ErrorCode;
 import com.asked.kr.exception.exceptions.NoMemberException;
+import com.asked.kr.exception.exceptions.NotSameMemberException;
+import com.asked.kr.exception.exceptions.NotSameReceiverException;
 import com.asked.kr.repository.AskRepository;
 import com.asked.kr.repository.MemberRepository;
 import com.asked.kr.util.ResponseDtoUtil;
@@ -35,7 +37,6 @@ public class AskService {
     @Transactional(readOnly = true)
     public List<AskResDto> getAll(String memberEmail){
         List<AskResDto> result = ResponseDtoUtil.mapAll(askRepository.findAskByReceiverEmail(memberEmail), AskResDto.class);
-        log.info("result  = {}",result.toString());
         return result;
     }
 
@@ -46,7 +47,7 @@ public class AskService {
         Member member = memberRepository.findByEmail(MemberService.getUserEmail())
                 .orElseThrow(() -> new NoMemberException("멤버가 존재하지 않습니다.", ErrorCode.NO_MEMBER));
         if(ask.getReceiver()!=member){
-            throw new RuntimeException();
+            throw new NotSameReceiverException("수신자가 일치하지 않습니다.", ErrorCode.NOT_SAME_MEMBER);
         }
         ask.updateCheck(AnswerCheck.REFUSED);
     }
