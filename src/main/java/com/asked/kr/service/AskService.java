@@ -6,6 +6,7 @@ import com.asked.kr.domain.Member;
 import com.asked.kr.dto.req.AskReqDto;
 import com.asked.kr.dto.res.AskResDto;
 import com.asked.kr.exception.ErrorCode;
+import com.asked.kr.exception.exceptions.AskNotFindException;
 import com.asked.kr.exception.exceptions.NoMemberException;
 import com.asked.kr.exception.exceptions.NotSameMemberException;
 import com.asked.kr.exception.exceptions.NotSameReceiverException;
@@ -43,7 +44,7 @@ public class AskService {
     @Transactional
     public void refuseAsk(Long askIdx){
         Ask ask = askRepository.findById(askIdx)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new AskNotFindException("질문을 찾을 수 없습니다.", ErrorCode.NOT_FIND_ASK));
         Member member = memberRepository.findByEmail(MemberService.getUserEmail())
                 .orElseThrow(() -> new NoMemberException("멤버가 존재하지 않습니다.", ErrorCode.NO_MEMBER));
         if(ask.getReceiver()!=member){
