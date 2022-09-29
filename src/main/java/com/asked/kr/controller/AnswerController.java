@@ -4,7 +4,7 @@ import com.asked.kr.dto.req.AnswerReqDto;
 import com.asked.kr.dto.req.AnswerUpdateDto;
 import com.asked.kr.response.ResponseService;
 import com.asked.kr.response.result.CommonResult;
-import com.asked.kr.service.AnswerService;
+import com.asked.kr.service.impl.AnswerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v1")
 public class AnswerController {
-    private final AnswerService answerService;
+    private final AnswerServiceImpl answerService;
     private final ResponseService responseService;
     @PostMapping("/answer/{askIdx}")
     public CommonResult writeAnswer(@PathVariable Long askIdx, @RequestBody AnswerReqDto answerReqDto){

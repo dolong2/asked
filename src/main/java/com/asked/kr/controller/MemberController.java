@@ -7,7 +7,7 @@ import com.asked.kr.response.ResponseService;
 import com.asked.kr.response.result.CommonResult;
 import com.asked.kr.response.result.ListResult;
 import com.asked.kr.response.result.SingleResult;
-import com.asked.kr.service.MemberService;
+import com.asked.kr.service.impl.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/v1")
 public class MemberController {
-    private final MemberService memberService;
+    private final MemberServiceImpl memberService;
     private final ResponseService responseService;
     @PostMapping("/join")
     public CommonResult join(@RequestBody MemberReqDto memberReqDto){

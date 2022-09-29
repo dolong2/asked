@@ -5,7 +5,7 @@ import com.asked.kr.dto.res.AskResDto;
 import com.asked.kr.response.ResponseService;
 import com.asked.kr.response.result.CommonResult;
 import com.asked.kr.response.result.ListResult;
-import com.asked.kr.service.AskService;
+import com.asked.kr.service.impl.AskServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v1")
 public class AskController {
-    private final AskService askService;
+    private final AskServiceImpl askService;
     private final ResponseService responseService;
     @PostMapping("/ask/{memberEmail}")
     public CommonResult write(@RequestBody AskReqDto askReqDto, @PathVariable String memberEmail){
