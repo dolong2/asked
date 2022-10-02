@@ -78,5 +78,8 @@ public class TokenProvider {
         return doGenerateToken(email, TokenType.REFRESH_TOKEN,REFRESH_TOKEN_EXPIRE_TIME);
     }
 
+    public Long getRefreshTokenExpireTime(){
+        return REFRESH_TOKEN_EXPIRE_TIME;
+    }
 }
 
