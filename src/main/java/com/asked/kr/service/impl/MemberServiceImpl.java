@@ -55,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
         final String accessToken = tokenProvider.generateAccessToken(member.getEmail());
         final String refreshToken = tokenProvider.generateRefreshToken(member.getEmail());
 
-        redisUtil.setData("refreshToken", refreshToken, tokenProvider.getRefreshTokenExpireTime());
+        redisUtil.setData(member.getEmail()+"RefreshToken", refreshToken, tokenProvider.getRefreshTokenExpireTime());
 
         Map<String,String> map=new HashMap<>();
         map.put("email", member.getEmail());
