@@ -2,6 +2,8 @@ package com.asked.kr.config.security.jwt;
 
 import com.asked.kr.config.security.auth.MyUserDetailsService;
 import com.asked.kr.exception.ErrorCode;
+import com.asked.kr.exception.exceptions.AccessTokenExpiredException;
+import com.asked.kr.exception.exceptions.InvalidTokenException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -30,10 +32,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String accessToken = request.getHeader("Authorization");
         if(accessToken != null){
             if(tokenProvider.isTokenExpired(accessToken)){
-                throw new RuntimeException();
+                throw new AccessTokenExpiredException("AccessToken is expired", ErrorCode.TOKEN_EXPIRED);
             }
             else if(!tokenProvider.getTokenType(accessToken).equals("accessToken")){
-                throw new RuntimeException();
+                throw new InvalidTokenException("Invalid Token", ErrorCode.INVALID_TOKEN);
             }
             String email = tokenProvider.getUserEmail(accessToken);
             registerSecurityContext(request, email);
