@@ -3,6 +3,7 @@ package com.asked.kr.config.security;
 
 
 import com.asked.kr.config.security.jwt.JwtRequestFilter;
+import com.asked.kr.exception.Handler.ExceptionHandlerFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final JwtRequestFilter jwtRequestFilter;
-    //private final ExceptionHandlerFilter exceptionHandlerFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Override
     public void configure(WebSecurity web) {
@@ -45,8 +46,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(null) //로그인 에러
                 .and()
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-                //.addFilterBefore(exceptionHandlerFilter, JwtRequestFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtRequestFilter.class);
     }
 
     @Bean
