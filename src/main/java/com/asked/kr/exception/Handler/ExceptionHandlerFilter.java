@@ -8,7 +8,6 @@ import com.asked.kr.exception.response.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -42,8 +41,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     private void responseErrorMessage(HttpServletResponse response, ErrorCode errorCode) {
         // content type, status code 세팅
-        response.setContentType("");
+        response.setContentType("application/json");
         response.setStatus(errorCode.getStatus());
+        response.setCharacterEncoding("utf-8");
 
         try {
             ErrorResponse errorResponse = new ErrorResponse(errorCode);
